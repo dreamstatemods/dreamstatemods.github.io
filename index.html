@@ -12,7 +12,7 @@ body {
   background: #0b0b0b;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: 16px;
   font-family: 'Noto Sans JP', sans-serif;
 }
 
@@ -20,8 +20,10 @@ body {
 .mal-widget {
   background: #111;
   color: #ddd;
-  width: 420px;
-  padding: 20px;
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  padding: 14px;
   border: 2px solid #2db039;   /* default = manga = green */
   transition: border-color 0.5s ease;
   position: relative;
@@ -42,7 +44,7 @@ body {
 /* Username — LEFT */
 .mal-username {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #2db039;
   letter-spacing: 0.04em;
@@ -246,8 +248,8 @@ input:checked + .slider::before { transform: translateX(14px); }
 }
 
 .update-item img {
-  width: 48px;
-  height: 68px;
+  width: 36px;
+  height: 51px;
   object-fit: cover;
   border-radius: 3px;
   flex-shrink: 0;
@@ -307,7 +309,7 @@ input:checked + .slider::before { transform: translateX(14px); }
    DOM is rebuilt on each advance — no translateX, no clone math. */
 .mal-carousel {
   margin-top: 25px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #1e1e1e;
   padding-top: 16px;
   display: flex;
   flex-direction: column;  /* label on top, window below */
@@ -315,12 +317,11 @@ input:checked + .slider::before { transform: translateX(14px); }
 
 .carousel-window {
   width: 100%;
-  height: 260px;
+  height: 190px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1a1a1a;
 }
 
 .carousel-track {
@@ -329,16 +330,16 @@ input:checked + .slider::before { transform: translateX(14px); }
 }
 
 .carousel-item {
-  margin: 0 20px;
+  margin: 0 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100px;
+  width: 70px;
   flex-shrink: 0;
 }
 
 .image-wrapper {
-  height: 210px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,7 +348,7 @@ input:checked + .slider::before { transform: translateX(14px); }
 }
 
 .carousel-item img {
-  width: 100px;
+  width: 70px;
   transition: transform 0.6s ease, opacity 0.6s ease, filter 0.6s ease;
   opacity: 0.8;
   border: 2px solid #2db039;   /* default = manga = green */
@@ -376,11 +377,11 @@ input:checked + .slider::before { transform: translateX(14px); }
 
 /* 2-line clamped title — wider than the image so longer names breathe */
 .item-title {
-  font-size: 11px;
+  font-size: 10px;
   color: #888;
   opacity: 0;
   margin-top: 6px;
-  width: 130px;
+  width: 90px;
   text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -721,11 +722,18 @@ input:checked + .slider::before { transform: translateX(14px); }
         ? data.favorites.anime
         : data.favorites.manga;
 
+
       if (!isAnime && !(favorites && favorites.length)) {
         clearInterval(autoSlide);
-        document.getElementById("carousel-track").innerHTML =
-          `<img src="icantread.jpg" alt="" style="width:100%;display:block;border-radius:3px;">`;
+        carouselFavs = [];
+        const flatImg = document.createElement("img");
+        flatImg.src = "/icantread.jpg";
+        flatImg.alt = "";
+        flatImg.style.cssText = "width:100%;height:190px;object-fit:cover;display:block;border-radius:3px;";
+        document.getElementById("carousel-track").innerHTML = "";
+        document.getElementById("carousel-track").appendChild(flatImg);
       } else {
+        document.getElementById("carousel-track").innerHTML = "";
         buildCarousel(favorites || []);
       }
 
@@ -752,5 +760,4 @@ input:checked + .slider::before { transform: translateX(14px); }
 </script>
 
 </body>
-
 </html>
