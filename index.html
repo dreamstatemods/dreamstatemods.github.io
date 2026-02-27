@@ -490,11 +490,10 @@ input:checked + .slider::before { transform: translateX(14px); }
 <script>
 (async () => {
 
-  const API = "https://api.jikan.moe/v4/users/dream-state/full";
+  const API = "https://mal-widget-test.dreamstatemods.workers.dev/dream-state";
 
   const res  = await fetch(API);
-  const json = await res.json();
-  const data = json.data;
+  const data = await res.json();
 
   const widget       = document.getElementById("widget");
   const toggle       = document.getElementById("modeToggle");
@@ -503,7 +502,7 @@ input:checked + .slider::before { transform: translateX(14px); }
   // USERNAME
   const usernameEl = document.getElementById("mal-username");
   usernameEl.textContent = data.username;
-  usernameEl.onclick = () => window.open(data.url, "_blank");
+  usernameEl.onclick = () => window.open(data.profile.url, "_blank");
 
   // ---- Stat bar animation ----
   function animateBars(stats, isAnime) {
@@ -526,33 +525,32 @@ input:checked + .slider::before { transform: translateX(14px); }
     setBar("bar-plan",      planVal);
   }
 
-  // ---- Render updates (JIKAN FORMAT) ----
+  // ---- Render updates (WORKER FORMAT) ----
   function renderUpdates(entries, isAnime) {
     const list = document.getElementById("update-list");
     list.innerHTML = "";
 
     entries.slice(0, 5).forEach(update => {
 
-      const entry = update.entry;
-      const image = entry.images?.jpg?.image_url || "";
-      const title = entry.title;
-      const url   = entry.url;
+      const image = update.image || "";
+      const title = update.title || "";
+      const url   = update.url   || "";
 
       let progress = 0;
       let total    = 0;
       let label    = "";
 
       if (isAnime) {
-        progress = update.episodes_seen || 0;
-        total    = update.episodes_total || 0;
+        progress = update.progress       || 0;
+        total    = update.total_episodes || 0;
         label    = `Ep ${progress} / ${total || "?"}`;
       } else {
-        progress = update.chapters_read || 0;
-        total    = update.chapters_total || 0;
+        progress = update.progress       || 0;
+        total    = update.total_chapters || 0;
         label    = `Ch ${progress} / ${total || "?"}`;
       }
 
-      const pct = total ? Math.round((progress / total) * 100) : 0;
+      const pct = update.percentComplete ?? (total ? Math.round((progress / total) * 100) : 0);
 
       const el = document.createElement("div");
       el.className = "update-item";
@@ -707,10 +705,10 @@ input:checked + .slider::before { transform: translateX(14px); }
 
       animateBars(stats, isAnime);
 
-      // JIKAN updates
+      // Worker updates
       const updates = isAnime
-        ? data.updates.anime
-        : data.updates.manga;
+        ? data.recentUpdates.anime
+        : data.recentUpdates.manga;
 
       document.getElementById("updates-label").textContent =
         isAnime ? "Recent Anime Updates" : "Recent Manga Updates";
